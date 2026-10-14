@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+doctor() {
+  local ok=true
+  local doctor_root="${SHELLDON_DOCTOR_ROOT:-$HOME}"
+
+  check_file() {
+    local path="$1"
+    if [[ -f "$path" ]]; then
+      printf "ok   file  %s\n" "$path"
+    else
+      printf "fail file  %s\n" "$path"
+      ok=false
+    fi
+  }
+
+  check_cmd() {
+    local name="$1"
+    if command -v "$name" >/dev/null 2>&1; then
+      printf "ok   cmd   %s -> %s\n" "$name" "$(command -v "$name")"
+    else
+      printf "fail cmd   %s\n" "$name"
+      ok=false
+    fi
+  }
+
+  check_file "$doctor_root/.zshrc"
+  check_file "$doctor_root/.zsh/pure/async.zsh"
+  check_file "$doctor_root/.zsh/pure/pure.zsh"
+  check_file "$doctor_root/.zsh/smallerTurtleicon.png"
+  check_file "$doctor_root/.local/share/applications/shelldon.desktop"
+
+  local sz
+  for sz in 16 22 24 32 48; do
+    check_file "$doctor_root/.local/share/icons/hicolor/${sz}x${sz}/apps/shelldon.png"
+  done
+
+  check_cmd kitty
+  check_cmd zsh
+
+  if [[ "$ok" == true ]]; then
+    printf "shelldon doctor: healthy\n"
+    return 0
+  fi
+
+  printf "shelldon doctor: issues found\n"
+  return 1
+}
+
+run_suroot() {
+  exec sudo env HOME="$HOME" ZDOTDIR="$HOME" /usr/bin/zsh -il
+}
+
+run_unleash_shell() {
+  exec sudo env HOME="$HOME" ZDOTDIR="$HOME" SHELLDON_UNLEASH=1 /usr/bin/zsh -il
+}
+
+if [[ "${1:-}" == "doctor" ]]; then
+  shift
+  doctor "$@"
+  exit $?
+fi
+
+if [[ "${1:-}" == "unleashShell" ]]; then
+  shift
+  run_unleash_shell "$@"
+  exit $?
+fi
+
+if [[ "${1:-}" == "suroot" ]]; then
+  shift
+  run_suroot "$@"
+  exit $?
+fi
+
+exec kitty --class shelldon "$@"

@@ -140,7 +140,7 @@ prompt_pure_preprompt_render() {
 	[[ -n $prompt_pure_state[username] ]] && preprompt_parts+=($prompt_pure_state[username])
 
 	# Set the path.
-	preprompt_parts+=('%F{${prompt_pure_colors[path]}}%~%f')
+	preprompt_parts+=('%F{${prompt_pure_colors[path]}}%/%f')
 
 	# Git branch and dirty status info.
 	typeset -gA prompt_pure_vcs_info
@@ -711,8 +711,8 @@ prompt_pure_state_setup() {
 	# Show `username@host` if inside a container and not in GitHub Codespaces.
 	[[ -z "${CODESPACES}" ]] && prompt_pure_is_inside_container && username='%F{$prompt_pure_colors[user]}%n%f'"$hostname"
 
-	# Show `username@host` if root, with username in default color.
-	[[ $UID -eq 0 ]] && username='%F{$prompt_pure_colors[user:root]}%n%f'"$hostname"
+	# Root sessions are already visually distinct in Shelldon; keep the line clean.
+	[[ $UID -eq 0 ]] && username=''
 
 	typeset -gA prompt_pure_state
 	prompt_pure_state[version]="1.23.0"

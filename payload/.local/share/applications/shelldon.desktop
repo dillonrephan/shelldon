@@ -1,0 +1,17 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=shelldon
+GenericName=Terminal emulator
+Comment=Fast, feature-rich, GPU based terminal
+TryExec=shelldon
+StartupNotify=true
+StartupWMClass=shelldon
+Exec=shelldon
+Icon=shelldon
+Categories=System;TerminalEmulator;
+X-TerminalArgExec=--
+X-TerminalArgTitle=--title
+X-TerminalArgAppId=--class
+X-TerminalArgDir=--working-directory
+X-TerminalArgHold=--hold
